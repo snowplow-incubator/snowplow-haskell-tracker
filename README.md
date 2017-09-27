@@ -10,16 +10,34 @@
 
 Add analytics to your Haskell apps and servers using the **[Snowplow][snowplow]** event tracker for **[Haskell][haskell]**.
 
+### TODO:
+
+* [X] True timstamps
+* [X] POST/buffering
+* [X] Ad-hoc test
+* [ ] Callbacks
+* [o] Resend logic
+* [X] Emitter function
+* [X] Separate emitter into its own module
+* [ ] Documentation
+* [ ] Cabal, CI/CD
+* [ ] Other tracking functions
+  - trackSelfDescribingEvent
+  - trackEcommerceTransaction
+  - trackEcommerceTransactionItem
+  - trackStructEvent
+* [ ] Load test
+* [ ] Extract real page URI/title from Spock controller
+
 ## Quickstart
 
 Assuming git, **[Vagrant][vagrant-install]** and **[VirtualBox][virtualbox-install]** installed:
 
 ```bash
- host$ git clone https://github.com/snowplow/snowplow-haskell-tracker.git
+ host$ git clone https://github.com/snowplow-incubator/snowplow-haskell-tracker.git
  host$ cd snowplow-haskell-tracker
  host$ vagrant up && vagrant ssh
 guest$ cd /vagrant
-guest$ sbt test
 ```
 
 ## Find out more
@@ -48,7 +66,7 @@ limitations under the License.
 [license-image]: http://img.shields.io/badge/license-Apache--2-blue.svg?style=flat
 [license]: http://www.apache.org/licenses/LICENSE-2.0
 
-[release-image]: http://img.shields.io/badge/release-0.3.0-blue.svg?style=flat
+[release-image]: http://img.shields.io/badge/release-0.1.0.0-blue.svg?style=flat
 [releases]: https://github.com/snowplow/snowplow-haskell-tracker/releases
 
 [snowplow]: http://snowplowanalytics.com

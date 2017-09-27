@@ -28,11 +28,11 @@ data SchemaRef = SchemaRef {
   vendor :: String,
   name :: String,
   format :: String,
-  version :: SchemaVer
+  schemaVer :: SchemaVer
 } deriving (Show, Eq)
 
 schemaRefToPath :: SchemaRef -> Text
-schemaRefToPath ref = pack (vendor ref) `append` "/" `append` pack (name ref) `append` "/" `append` pack (format ref) `append` "/" `append` schemaVerToString (version ref)
+schemaRefToPath ref = pack (vendor ref) `append` "/" `append` pack (name ref) `append` "/" `append` pack (format ref) `append` "/" `append` schemaVerToString (schemaVer ref)
 
 schemaRefToUri :: SchemaRef -> Text
 schemaRefToUri ref = "iglu:" `append` schemaRefToPath ref

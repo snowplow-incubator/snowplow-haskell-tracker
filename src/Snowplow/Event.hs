@@ -16,6 +16,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Lazy.Encoding as LE
 import qualified Data.HashMap.Strict as HS
 
+import System.Random
 import Data.UUID
 import Data.Text.Encoding
 import Data.Vector hiding ((++))
@@ -24,6 +25,10 @@ import Data.Scientific (coefficient)
 import Data.Aeson
 
 import Iglu.Core
+
+-- import Paths_snowplow_haskell_tracker (version)
+-- import Data.Version (showVersion)
+
 
 type Context = SelfDescribingJson
 
@@ -38,6 +43,7 @@ instance ToJSON EventType where
 
 -- Data structure representing all available fields accroding to Snowplow Tracker Protocol
 data SnowplowEvent = SnowplowEvent {
+  appId                  :: Maybe String,
   eventType              :: EventType,
   eventId                :: UUID,
   trackerVersion         :: Maybe String,
@@ -58,6 +64,7 @@ data TrackerEvent = Single SnowplowEvent | Buffered [SnowplowEvent]
 -- TODO: this should be refined type
 instance ToJSON SnowplowEvent where
   toJSON e = object [
+    "aid"  .= appId e,
     "e"    .= eventType e,
     "eid"  .= toString (eventId e),
     "tv"   .= trackerVersion e,
@@ -81,10 +88,15 @@ nonEmpty :: [a] -> Maybe [a]
 nonEmpty [] = Nothing
 nonEmpty as = Just as
 
-emptyEvent :: SnowplowEvent
-emptyEvent = SnowplowEvent { 
+emptyEvent :: IO SnowplowEvent
+emptyEvent = do
+  eid <- randomIO :: IO UUID
+  return $ SnowplowEvent { 
+  appId                  = Nothing,
+  eventId                = eid,
   eventType              = Unstructured,
-  trackerVersion         = Just "haskell-0.1.0.0",
+  trackerVersion         = Just $ "haskell-0.1.0.0",  -- Paths_snowplow_haskell_tracker crash linker; TODO: fix with docker
+  contexts               = [],
   encodedContexts        = [],
 
   url                    = Nothing,
@@ -104,7 +116,7 @@ contextSchema = SchemaRef {
   vendor = "com.snowplowanalytics.snowplow",
   name = "contexts",
   format = "jsonschema",
-  version = SchemaVer { model = 1, revision = 0, addition = 1 }
+  schemaVer = SchemaVer { model = 1, revision = 0, addition = 1 }
 }
 
 postSchema :: SchemaRef
@@ -112,7 +124,7 @@ postSchema = SchemaRef {
   vendor = "com.snowplowanalytics.snowplow",
   name = "payload_data",
   format = "jsonschema",
-  version = SchemaVer { model = 1, revision = 0, addition = 4 }
+  schemaVer = SchemaVer { model = 1, revision = 0, addition = 4 }
 }
 
 wrapContexts :: [Context] -> Context
